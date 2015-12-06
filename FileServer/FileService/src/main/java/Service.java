@@ -8,7 +8,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 /**
- * Created by Алексей on 02.12.2015.
+ * Класс создает соединение с клиентом.
+ *
  */
 public class Service
 {
@@ -42,6 +43,10 @@ public class Service
         }
 
     }
+    /**
+     * Метод заполняет hashtable ключами и соответствующими файлами
+     *
+     */
 
     public static void getListFiles(String str)
     {
@@ -71,7 +76,9 @@ public class Service
 
     }
 }
-
+/**
+ * Класс осуществляет общение с клиентом через InputStream и OutputStream
+ */
 class TransferFile extends Thread
 {
     Socket ClientSoc;
@@ -94,7 +101,9 @@ class TransferFile extends Thread
             e.printStackTrace();
         }
     }
-
+    /**
+     * Метод ищет файлы на сервере по имени и отправляет список(уникальный идентификатор/файл) клиенту
+     */
     void findFile()
     {
         try
@@ -130,22 +139,24 @@ class TransferFile extends Thread
         }
 
     }
-
+    /**
+     * Метод получает индификатор от клиента, и посылает его,
+     * если данный файла существует
+     */
     void sendFile()
     {
         try
         {
-
-
             String fileKey = dis.readUTF();
-            File file = hashtable.get(fileKey);
-            {
-                if (!file.exists())
+
+
+                if (!hashtable.containsKey(fileKey))
                 {
                     dos.writeUTF("File Not Found");
                     return;
                 } else
                 {
+                    File file = hashtable.get(fileKey);
                     dos.writeUTF(hashtable.get(fileKey).getName());
                     FileInputStream fis = new FileInputStream(file);
                     int ch;
@@ -158,7 +169,7 @@ class TransferFile extends Thread
                     fis.close();
                     dos.writeUTF("File Receive Successfully");
                 }
-            }
+
         } catch (FileNotFoundException e)
         {
             e.printStackTrace();
@@ -169,7 +180,10 @@ class TransferFile extends Thread
             System.out.println("IOException");
         }
     }
-
+    /**
+     * Метод получает индификатор от клиента и сохраняет в указанную директорию файл
+     * с данным индификатором
+     */
     void reseiveFile()
     {
         try
@@ -201,7 +215,7 @@ class TransferFile extends Thread
                 dos.writeUTF("SendFile");
                 option = "Y";
             }
-            if (option.compareTo("Y") == 0)
+            if (option.compareToIgnoreCase("Y") == 0)
             {
                 FileOutputStream fos = new FileOutputStream(file);
                 int ch;
@@ -233,7 +247,10 @@ class TransferFile extends Thread
         }
     }
 
-
+    /**
+     * Метод принимает индификатор от клиента и удаляет файл на сервере
+     * с данным индификатором
+     */
     void deleteFile()
     {
         try
@@ -248,7 +265,7 @@ class TransferFile extends Thread
             {
                 dos.writeUTF("Delete File");
                 option = dis.readUTF();
-                if (option.compareTo("Y") == 0)
+                if (option.compareToIgnoreCase("Y") == 0)
                 {
                     File file = hashtable.get(fileKey);
                     file.delete();
@@ -311,7 +328,9 @@ class TransferFile extends Thread
         }
     }
 }
-
+/**
+ * Класс отвечает за выбор рабочей директории
+ */
 class NewDirectory
 {
     private static NewDirectory instance;

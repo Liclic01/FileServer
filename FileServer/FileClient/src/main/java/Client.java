@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 /**
- * Created by Алексей on 03.12.2015.
+ * Класс создает соединение по сокету с сервером
  */
 public class Client
 {
@@ -20,11 +20,12 @@ public class Client
         }
     }
 }
-
+/**
+ * Класс осуществляет общение с сервером через InputStream и OutputStream
+ */
 class TransferFileClient
 {
     Socket ClientSoc;
-
     DataInputStream dis;
     DataOutputStream dos;
     BufferedReader br;
@@ -43,7 +44,11 @@ class TransferFileClient
         }
     }
 
-    void sendFile()
+    /**
+     * Метод находит файл на клиенте, создает индификатор и посылает файл на сервер,
+     * если данного файла там нет
+     */
+   private void sendFile()
     {
         String filename;
         System.out.println("Enter File Name :");
@@ -107,7 +112,10 @@ class TransferFileClient
             return;
         }
     }
-
+    /**
+     * Метод отправляет имя файла и выводит
+     * полученный с сервера список(уникальный идентификатор/файл) в консоль
+     */
     void findFile()
     {
         String filename;
@@ -132,14 +140,16 @@ class TransferFileClient
             System.out.println("IOException");
         }
     }
-
+    /**
+     * Метод отправляет индификатор серверу и сохраняет в указанную директорию файл
+     * с данным индификатором
+     */
     void receiveFile()
     {
         String fileKey;
         System.out.println("Enter File Key :");
         try
         {
-
 
             fileKey = br.readLine();
             dos.writeUTF(fileKey);
@@ -150,9 +160,10 @@ class TransferFileClient
                 return;
             } else
             {
-                System.out.println("Receiving File ...");
+
                 System.out.println("Enter Directory ...");
                 String directory = br.readLine();
+                System.out.println("Receiving File ...");
                 File file = new File(directory + "\\" + msgFromServer);
                 if (file.exists())
                 {
@@ -191,7 +202,9 @@ class TransferFileClient
             System.out.println("IOException");
         }
     }
-
+    /**
+     * Метод отправляет индификатор серверу и посылает запрос на удаление файла
+     */
     void deleteFile()
     {
         String fileKey;
@@ -229,7 +242,11 @@ class TransferFileClient
         }
 
     }
-
+    /**
+     * Метод вывод в консоль меню.
+     * Осуществяет вызов методов в соответствии
+     * с пунктами
+     */
     public void displayMenu()
     {
 
